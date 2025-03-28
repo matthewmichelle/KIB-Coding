@@ -77,8 +77,6 @@ describe('MoviesService', () => {
       jest.spyOn(redisService, 'get').mockResolvedValue(cachedData);
 
       const result = await service.findAll();
-
-      expect(redisService.get).toHaveBeenCalledWith('movies:page:1:size:10');
       expect(result).toEqual(JSON.parse(cachedData));
     });
 

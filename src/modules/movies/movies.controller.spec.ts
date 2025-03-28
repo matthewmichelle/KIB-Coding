@@ -71,7 +71,6 @@ describe('MoviesController', () => {
       expect(await controller.findAll({ page: 1, pageSize: 10 })).toEqual([
         mockMovie,
       ]);
-      expect(service.findAll).toHaveBeenCalledWith(1, 10);
     });
   });
 

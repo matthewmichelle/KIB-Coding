@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Movie, MovieDocument } from './schema/movie.schema';
 import { RedisService } from '../../common/database/cache.service';
+
 @Injectable()
 export class MoviesService {
   constructor(
@@ -33,25 +34,57 @@ export class MoviesService {
     return createdMovie;
   }
 
-  async findAll(page = 1, pageSize = 10): Promise<any> {
-    const cacheKey = `movies:page:${page}:size:${pageSize}`;
+  async findAll(
+    page = 1,
+    pageSize = 10,
+    search?: string,
+    filters?: Record<string, any>,
+  ): Promise<any> {
+    const cacheKey = `movies:page:${page}:size:${pageSize}:search:${
+      search || 'none'
+    }:filters:${JSON.stringify(filters)}`;
 
-    // Check Redis first
+    // Check Redis cache first
     const cachedMovies = await this.redisService.get(cacheKey);
     if (cachedMovies) {
       console.log(
-        `⚡ Fetching movies from cache: Page ${page}, Size ${pageSize}`,
+        `⚡ Fetching movies from cache: Page ${page}, Size ${pageSize}, Search: ${search}, Filters: ${JSON.stringify(
+          filters,
+        )}`,
       );
-      const result = JSON.parse(cachedMovies);
-      return { ...result, total: result.total };
+      return JSON.parse(cachedMovies);
     }
 
     console.log(
-      `🟡 Fetching movies from database: Page ${page}, Size ${pageSize}`,
+      `🟡 Fetching movies from database: Page ${page}, Size ${pageSize}, Search: ${search}, Filters: ${JSON.stringify(
+        filters,
+      )}`,
     );
-    const total = await this.movieModel.countDocuments();
+
+    // Construct MongoDB query
+    const query: any = {};
+
+    // Apply search filter
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } }, // Case-insensitive title search
+        { description: { $regex: search, $options: 'i' } }, // Case-insensitive description search
+      ];
+    }
+
+    // Apply additional filters
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        query[key] = value;
+      });
+    }
+
+    // Get total count before applying pagination
+    const total = await this.movieModel.countDocuments(query);
+
+    // Apply pagination
     const movies = await this.movieModel
-      .find()
+      .find(query)
       .skip((page - 1) * pageSize)
       .limit(pageSize)
       .exec();
@@ -60,9 +93,13 @@ export class MoviesService {
 
     // Store in Redis
     await this.redisService.set(cacheKey, JSON.stringify(result), 3600);
-    console.log(`🟢 Movies stored in cache: Page ${page}, Size ${pageSize}`);
+    console.log(
+      `🟢 Movies stored in cache: Page ${page}, Size ${pageSize}, Search: ${search}, Filters: ${JSON.stringify(
+        filters,
+      )}`,
+    );
 
-    return { ...result, total: result.total };
+    return result;
   }
 
   async findById(id: number): Promise<Movie | null> {

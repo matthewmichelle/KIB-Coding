@@ -6,8 +6,9 @@ import {
   Delete,
   Param,
   Body,
+  Query,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiQuery } from '@nestjs/swagger';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { MoviesService } from './movies.service';
 import { UpdateMovieDto } from './dto/update-movie.dto';
@@ -27,9 +28,25 @@ export class MoviesController {
   @Get()
   @ApiQueryPagination('page', 'Page number', 1)
   @ApiQueryPagination('pageSize', 'Number of items per page', 10)
-  async findAll(@Paginate() pagination: { page: number; pageSize: number }) {
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    description: 'Search by title or description',
+  })
+  @ApiQuery({
+    name: 'filters',
+    required: false,
+    description:
+      'Filters as JSON string (e.g., {"genre": "action", "year": 2023})',
+  })
+  async findAll(
+    @Paginate() pagination: { page: number; pageSize: number },
+    @Query('search') search?: string,
+    @Query('filters') filters?: string,
+  ) {
     const { page, pageSize } = pagination;
-    return this.movieService.findAll(page, pageSize);
+    const parsedFilters = filters ? JSON.parse(filters) : undefined;
+    return this.movieService.findAll(page, pageSize, search, parsedFilters);
   }
 
   @Get(':id')
