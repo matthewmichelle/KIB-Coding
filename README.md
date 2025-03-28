@@ -91,8 +91,9 @@ http://localhost:8080/api
 | PUT    | `/movies/:id` | Update an existing movie  |
 | DELETE | `/movies/:id` | Delete a movie            |
 
----
-## Project Structure
+
+## 🎯 Project Structure
+```
 .
 ├── Dockerfile
 ├── LICENSE
@@ -185,6 +186,8 @@ http://localhost:8080/api
 │   └── jest-e2e.json
 ├── tsconfig.build.json
 └── tsconfig.json
+```
+
 ---
 ## 🤝 Contributing
 Contributions are welcome! Feel free to open issues and submit PRs.
