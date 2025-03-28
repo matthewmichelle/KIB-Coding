@@ -75,7 +75,7 @@ docker-compose up -d
 ## 📖 API Documentation (Swagger)
 After starting the server, visit:
 ```
-http://localhost:8080/api
+http://localhost:8080/api-docs
 ```
 
 ---
