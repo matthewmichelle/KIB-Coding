@@ -39,9 +39,23 @@ npm install
 ### 3️⃣ **Setup Environment Variables**
 Create a `.env` file and add the following:
 ```env
-MONGO_URI=mongodb://localhost:27017/KIB
-REDIS_URL=redis://localhost:6379
+# App
 PORT=8080
+PROMISE_TIMEOUT=10000
+# Database
+DB_URL=mongodb://0.0.0.0:27017/KIB
+REDIS_URL=localhost:6379
+# JWT
+JWT_SECRET=secret-for-testing-only-do-not-use-in-prod
+JWT_ACCESS_EXPIRE=300s
+JWT_REFRESH_EXPIRE=600s
+# Token Info
+TOKEN_ISSUER=kib
+TOKEN_AUDIENCE=kib
+#Configs
+CORS_URL=*
+NODE_TLS_REJECT_UNAUTHORIZED=0
+
 ```
 
 ### 4️⃣ **Run MongoDB and Redis** (Docker)

@@ -20,10 +20,7 @@ import { CustomHeaderMiddleware } from './common/middleware/custom-header.middle
 import helmet from 'helmet';
 import { CorrelationIdService } from './common/middleware/correlator-id.middleware';
 import { PlainLoggerService } from './helper-modules/app-config/logger.service';
-import { DecryptMiddleware } from './common/middleware/decrypt.middleware';
 import { MoviesModule } from './modules/movies/movies.module';
-import { RedisService } from './common/database/cache.service';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -80,9 +77,5 @@ export class AppModule implements NestModule {
         CustomHeaderMiddleware,
       )
       .forRoutes('*');
-
-    consumer
-      .apply(DecryptMiddleware)
-      .forRoutes({ path: 'login/basic', method: RequestMethod.POST });
   }
 }
