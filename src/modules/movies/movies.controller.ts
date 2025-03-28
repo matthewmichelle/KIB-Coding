@@ -1,34 +1,52 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { MoviesService } from './movies.service';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Param,
+  Body,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { CreateMovieDto } from './dto/create-movie.dto';
+import { MoviesService } from './movies.service';
 import { UpdateMovieDto } from './dto/update-movie.dto';
+import { ApiQueryPagination } from '../../common/decorators/pagination-header.decorator';
+import { Paginate } from '../../common/decorators/pagination.decorator';
 
+@ApiTags('Movies')
 @Controller('movies')
 export class MoviesController {
-  constructor(private readonly moviesService: MoviesService) {}
+  constructor(private readonly movieService: MoviesService) {}
 
   @Post()
-  create(@Body() createMovieDto: CreateMovieDto) {
-    return this.moviesService.create(createMovieDto);
+  async create(@Body() createMovieDto: CreateMovieDto) {
+    return this.movieService.create(createMovieDto);
   }
 
   @Get()
-  findAll() {
-    return this.moviesService.findAll();
+  @ApiQueryPagination('page', 'Page number', 1)
+  @ApiQueryPagination('pageSize', 'Number of items per page', 10)
+  async findAll(@Paginate() pagination: { page: number; pageSize: number }) {
+    const { page, pageSize } = pagination;
+    return this.movieService.findAll(page, pageSize);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.moviesService.findOne(+id);
+  async findById(@Param('id') id: number) {
+    return this.movieService.findById(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMovieDto: UpdateMovieDto) {
-    return this.moviesService.update(+id, updateMovieDto);
+  @Put(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() updateMovieDto: UpdateMovieDto,
+  ) {
+    return this.movieService.update(id, updateMovieDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.moviesService.remove(+id);
+  async delete(@Param('id') id: number) {
+    return this.movieService.delete(id);
   }
 }

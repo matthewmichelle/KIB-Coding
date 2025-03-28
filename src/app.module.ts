@@ -14,7 +14,6 @@ import * as correlator from 'express-correlation-id';
 import * as cors from 'cors'; // Importing the cors package
 import { BodyParserMiddleware } from './common/middleware/body-parser.middleware';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { KafkaModule } from './common/kafka/kafka.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { APP_PIPE } from '@nestjs/core';
 import { CustomHeaderMiddleware } from './common/middleware/custom-header.middleware';
@@ -22,9 +21,8 @@ import helmet from 'helmet';
 import { CorrelationIdService } from './common/middleware/correlator-id.middleware';
 import { PlainLoggerService } from './helper-modules/app-config/logger.service';
 import { DecryptMiddleware } from './common/middleware/decrypt.middleware';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MoviesModule } from './modules/movies/movies.module';
+import { RedisService } from './common/database/cache.service';
 
 @Module({
   imports: [
@@ -33,10 +31,8 @@ import { MoviesModule } from './modules/movies/movies.module';
     }),
     DatabaseModule,
     EventEmitterModule.forRoot(),
-    KafkaModule,
     AppConfigModule,
     JwtUtilsModule,
-    DatabaseModule,
     MoviesModule,
   ],
   providers: [
@@ -51,10 +47,8 @@ import { MoviesModule } from './modules/movies/movies.module';
     },
     PlainLoggerService,
     CorrelationIdService,
-    AppService,
   ],
-  controllers: [AppController],
-  exports: [AppConfigModule, KafkaModule],
+  exports: [AppConfigModule],
 })
 export class AppModule implements NestModule {
   constructor(private readonly appConfigService: AppConfigService) {}

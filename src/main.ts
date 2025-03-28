@@ -36,10 +36,8 @@ async function bootstrap() {
 
   // Swagger configuration
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('IDP (Identity Provider) Microservice')
-    .setDescription(
-      'The microservice responsible for managing registration, login, authentication, and authorization.',
-    )
+    .setTitle('KIB Codings')
+    .setDescription('The microservice responsible for managing movies')
     .setVersion('1.0.0')
     .addBearerAuth(
       {

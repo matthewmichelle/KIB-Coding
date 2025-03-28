@@ -22,7 +22,7 @@ export class SerializationInterceptor<T> implements NestInterceptor<T, any> {
     // For example, convert objects to DTOs, remove sensitive information, etc.
     return {
       message: 'Success',
-      data,
+      ...data,
     };
   }
 }

@@ -11,6 +11,7 @@ import { AppConfigService } from '../../helper-modules/app-config/app-config.ser
       useFactory: async (appConfigService: AppConfigService) => {
         try {
           const uri = appConfigService.getDdbUrl();
+          console.log('✅ Connected to MongoDB');
           return { uri };
         } catch (error) {
           // Properly handle configuration errors
