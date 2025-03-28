@@ -49,12 +49,11 @@ export class MoviesService {
     console.log(
       `🟡 Fetching movies from database: Page ${page}, Size ${pageSize}`,
     );
-    const total = await this.movieModel.countDocuments().exec();
+    const total = await this.movieModel.countDocuments();
     const movies = await this.movieModel
       .find()
       .skip((page - 1) * pageSize)
       .limit(pageSize)
-      .lean() // Use lean() for better performance
       .exec();
 
     const result = { data: movies, total };
