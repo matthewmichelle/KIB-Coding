@@ -16,12 +16,6 @@ export class AppConfigService {
   private readonly jwtRefreshExpiration =
     this.configService.get<string>('JWT_REFRESH_EXPIRE');
 
-  private readonly cryptoPassPhrase =
-    this.configService.get<string>('CRYPTO_PASSPHRASE');
-
-  private readonly cryptoKeyPath =
-    this.configService.get<string>('CRYPTO_KEY_PATH');
-
   private readonly tokenIssuer = this.configService.get<string>('TOKEN_ISSUER');
 
   private readonly tokenAudience =
@@ -39,9 +33,6 @@ export class AppConfigService {
   getJwtAccessExpiration = (): string => this.jwtAccessExpiration;
   getJwtRefreshExpiration = (): string => this.jwtRefreshExpiration;
   getCorsUrl = (): string => this.corsUrl;
-  getCryptoKeyPath = (): string => String(this.cryptoKeyPath);
-  getCryptoPassPhrase = (): any => this.cryptoPassPhrase;
-
   getTokenIssuer = (): string => String(this.tokenIssuer);
   getTokenAudience = (): any => this.tokenAudience;
 }
